@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.partner_api.apps.PartnerApiConfig',
     'apps.dashboards.apps.DashboardsConfig',
     'apps.api_keys.apps.ApiKeysConfig',
+    'backend.apps.webhooks.apps.WebhooksConfig',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.common.middleware.CustomExceptionMiddleware',
+    'apps.common.middleware.APILoggingMiddleware',
+    'apps.common.exception_middleware.CustomExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
