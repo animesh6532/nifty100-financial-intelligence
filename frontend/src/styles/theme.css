@@ -1,0 +1,8 @@
+/* Theme variables */
+:root {
+  --primary-color: #003366;
+  --secondary-color: #0066cc;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+}

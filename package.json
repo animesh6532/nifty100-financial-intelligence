@@ -1,0 +1,22 @@
+{
+  "name": "nifty100-financial-intelligence",
+  "version": "1.0.0",
+  "description": "Nifty100 Financial Intelligence Platform",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && cd frontend && npm install && cd ../backend && python -m venv venv",
+    "start": "docker-compose up",
+    "dev": "concurrently \"cd backend && python manage.py runserver\" \"cd frontend && npm run dev\"",
+    "backend": "cd backend && python manage.py runserver",
+    "frontend": "cd frontend && npm run dev",
+    "test": "concurrently \"cd backend && pytest\" \"cd frontend && npm test\"",
+    "lint": "concurrently \"cd backend && flake8 && black --check .\" \"cd frontend && npm run lint\"",
+    "build": "concurrently \"cd backend && pip install -r requirements.txt\" \"cd frontend && npm run build\""
+  },
+  "keywords": ["financial", "analytics", "nifty100", "stocks"],
+  "author": "Bluestock Fintech",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
