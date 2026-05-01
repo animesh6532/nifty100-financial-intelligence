@@ -1,0 +1,21 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build Docker image
+      run: docker build -t nifty100-fintech:latest .
+    
+    - name: Push to registry
+      run: echo "Push to container registry"
+    
+    - name: Deploy
+      run: echo "Deploy to production"

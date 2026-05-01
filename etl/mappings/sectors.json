@@ -1,0 +1,12 @@
+import json
+
+SECTORS_MAPPING = {
+    "IT": "Information Technology",
+    "BANK": "Banking",
+    "AUTO": "Automobile",
+    "PHARMA": "Pharmaceuticals",
+    "FMCG": "Consumer Goods",
+    "ENERGY": "Energy",
+    "METAL": "Metals & Mining",
+    "OTHER": "Other"
+}

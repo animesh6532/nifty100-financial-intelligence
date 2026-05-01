@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nifty100-backend-service
+spec:
+  selector:
+    app: nifty100-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nifty100-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nifty100-backend
+  template:
+    metadata:
+      labels:
+        app: nifty100-backend
+    spec:
+      containers:
+      - name: backend
+        image: nifty100-fintech:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: database-url
+        - name: DEBUG
+          value: "False"
