@@ -1,7 +1,7 @@
 module.exports = {
   content: [
     './index.html',
-    './src/**/*.{js,jsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'class',
   theme: {
@@ -24,4 +24,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
