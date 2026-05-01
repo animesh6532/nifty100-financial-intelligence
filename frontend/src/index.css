@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-fin-dark text-fin-text font-sans antialiased;
+  }
+}
+
+@layer components {
+  .fin-card {
+    @apply bg-fin-card border border-fin-border rounded-xl shadow-lg backdrop-blur-sm bg-opacity-90;
+  }
+  
+  .fin-input {
+    @apply bg-fin-dark border border-fin-border rounded-lg px-4 py-2 text-fin-text focus:outline-none focus:ring-2 focus:ring-fin-blue focus:border-transparent transition-all;
+  }
+  
+  .fin-button {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .fin-button-primary {
+    @apply fin-button bg-fin-blue text-white hover:bg-blue-600 shadow-md shadow-fin-blue/20;
+  }
+  
+  .fin-button-outline {
+    @apply fin-button border border-fin-border hover:bg-fin-border/50 text-fin-text;
+  }
+}
+
+/* Custom Scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e17; 
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155; 
+}

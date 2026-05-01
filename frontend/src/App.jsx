@@ -1,18 +1,28 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/layout/Layout';
+import Dashboard from './pages/Dashboard';
+import Screener from './pages/Screener';
+import CompanyDetail from './pages/CompanyDetail';
 
-export default function App() {
+function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Nifty100 Financial Intelligence
-          </h1>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Content will go here */}
-      </main>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="screener" element={<Screener />} />
+          <Route path="company/:id" element={<CompanyDetail />} />
+          
+          {/* Placeholders for future routes */}
+          <Route path="sectors" element={<div className="p-6">Sector Analytics (Coming Soon)</div>} />
+          <Route path="forecasts" element={<div className="p-6">Forecast Dashboard (Coming Soon)</div>} />
+          <Route path="api-docs" element={<div className="p-6">API Documentation (Coming Soon)</div>} />
+          <Route path="settings" element={<div className="p-6">Settings (Coming Soon)</div>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
+
+export default App;
