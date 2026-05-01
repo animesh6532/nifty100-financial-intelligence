@@ -1,0 +1,1 @@
+# Frontend assets animations init

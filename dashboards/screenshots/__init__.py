@@ -1,0 +1,1 @@
+# Dashboards screenshots init
