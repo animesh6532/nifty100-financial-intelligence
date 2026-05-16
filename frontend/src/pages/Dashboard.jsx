@@ -28,31 +28,33 @@ const StatCard = ({ title, value, icon, subtitle, trend, isLoading }) => {
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({ companies: [], stats: null });
+  const [data, setData] = useState({ 
+    companies: [], 
+    stats: { mcap: null, avgPE: null, health: null, anomalies: null },
+    revenueChartData: null,
+    trendChartData: null,
+    error: null
+  });
 
   useEffect(() => {
-    // In a real scenario, we might hit a specific /dashboard/ endpoint
-    // For now, we simulate fetching aggregated data from companies list
     const fetchDashboardData = async () => {
       try {
-        const res = await api.get('/companies/?limit=100');
-        const companies = res.results || res.data || [];
-        
-        // Aggregate stats manually for demo
-        const totalMcap = companies.reduce((acc, curr) => acc + Number(curr.market_cap_cr || 0), 0);
-        const avgPE = companies.reduce((acc, curr) => acc + Number(curr.pe_ratio || 0), 0) / (companies.length || 1);
-        const excellentHealth = companies.filter(c => c.health_label === 'EXCELLENT').length;
+        setLoading(true);
+        // We will now call the real dashboard endpoint. 
+        // We expect it to return stats, chart data, and top companies.
+        const res = await api.get('/dashboards/overview/');
+        const dashboardData = res.data;
         
         setData({
-          companies,
-          stats: {
-            mcap: (totalMcap / 100000).toFixed(2) + 'L Cr',
-            avgPE: avgPE.toFixed(1),
-            health: `${excellentHealth} Cos.`,
-          }
+          companies: dashboardData.top_companies || [],
+          stats: dashboardData.stats || { mcap: null, avgPE: null, health: null, anomalies: null },
+          revenueChartData: dashboardData.revenue_chart || null,
+          trendChartData: dashboardData.trend_chart || null,
+          error: null
         });
       } catch (err) {
         console.error("Dashboard data fetch failed", err);
+        setData(prev => ({ ...prev, error: "Failed to load dashboard data." }));
       } finally {
         setLoading(false);
       }
@@ -61,31 +63,14 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const revenueChartData = {
-    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-    datasets: [
-      {
-        label: 'Aggregated Revenue (Cr)',
-        data: [12000, 19000, 15000, 22000],
-        backgroundColor: '#3b82f6',
-        borderRadius: 4,
-      }
-    ]
-  };
-
-  const trendChartData = {
-    labels: ['2019', '2020', '2021', '2022', '2023'],
-    datasets: [
-      {
-        label: 'Avg Operating Margin %',
-        data: [15, 12, 18, 22, 21],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        fill: true,
-        tension: 0.4
-      }
-    ]
-  };
+  if (data.error) {
+    return (
+      <div className="flex items-center justify-center h-full p-8 text-fin-red">
+        <AlertTriangle className="mr-2" />
+        {data.error}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -98,22 +83,22 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           isLoading={loading} title="Total Market Cap" 
-          value={data.stats?.mcap || '0'} icon={<DollarSign size={20} />}
-          subtitle="vs last quarter" trend={4.2}
+          value={data.stats.mcap !== null ? data.stats.mcap : '-'} icon={<DollarSign size={20} />}
+          subtitle="NIFTY 100" 
         />
         <StatCard 
           isLoading={loading} title="Average P/E Ratio" 
-          value={data.stats?.avgPE || '0'} icon={<Activity size={20} />}
-          subtitle="Sector adjusted" trend={-1.5}
+          value={data.stats.avgPE !== null ? data.stats.avgPE : '-'} icon={<Activity size={20} />}
+          subtitle="Sector adjusted" 
         />
         <StatCard 
           isLoading={loading} title="Excellent Health" 
-          value={data.stats?.health || '0'} icon={<TrendingUp size={20} />}
-          subtitle="Companies upgraded" trend={12}
+          value={data.stats.health !== null ? data.stats.health : '-'} icon={<TrendingUp size={20} />}
+          subtitle="Companies upgraded" 
         />
         <StatCard 
           isLoading={loading} title="Anomalies Detected" 
-          value="3" icon={<AlertTriangle size={20} />}
+          value={data.stats.anomalies !== null ? data.stats.anomalies : '-'} icon={<AlertTriangle size={20} />}
           subtitle="Requires attention" 
         />
       </div>
@@ -121,13 +106,17 @@ const Dashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title="Quarterly Revenue Aggregation" className="h-[350px] flex flex-col">
-          <div className="flex-1 relative">
-            <BarChart data={revenueChartData} />
+          <div className="flex-1 relative flex items-center justify-center">
+            {loading ? <Skeleton className="h-full w-full" /> : 
+              data.revenueChartData ? <BarChart data={data.revenueChartData} /> : 
+              <span className="text-fin-muted">No chart data available</span>}
           </div>
         </Card>
         <Card title="Margin Trends (NIFTY 100 Avg)" className="h-[350px] flex flex-col">
-          <div className="flex-1 relative">
-            <LineChart data={trendChartData} />
+          <div className="flex-1 relative flex items-center justify-center">
+            {loading ? <Skeleton className="h-full w-full" /> : 
+              data.trendChartData ? <LineChart data={data.trendChartData} /> : 
+              <span className="text-fin-muted">No chart data available</span>}
           </div>
         </Card>
       </div>
@@ -147,12 +136,12 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.companies.slice(0, 5).map(company => (
-                  <tr key={company.company_id} className="border-b border-fin-border hover:bg-fin-border/20">
+                {data.companies.length > 0 ? data.companies.map(company => (
+                  <tr key={company.id || company.company_id} className="border-b border-fin-border hover:bg-fin-border/20">
                     <td className="px-4 py-3 font-semibold text-fin-blue">{company.symbol}</td>
-                    <td className="px-4 py-3">{company.company_name}</td>
-                    <td className="px-4 py-3 text-fin-muted">{company.sector_name}</td>
-                    <td className="px-4 py-3 text-right">{company.market_cap_cr}</td>
+                    <td className="px-4 py-3">{company.name || company.company_name}</td>
+                    <td className="px-4 py-3 text-fin-muted">{company.sector || company.sector_name || '-'}</td>
+                    <td className="px-4 py-3 text-right">{company.market_cap || company.market_cap_cr || '-'}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={`px-2 py-1 rounded text-xs font-bold ${
                         company.health_label === 'EXCELLENT' ? 'bg-fin-green/20 text-fin-green' : 
@@ -162,7 +151,13 @@ const Dashboard = () => {
                       </span>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan="5" className="px-4 py-8 text-center text-fin-muted">
+                      No companies found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

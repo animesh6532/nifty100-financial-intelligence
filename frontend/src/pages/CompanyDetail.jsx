@@ -49,16 +49,16 @@ const CompanyDetail = () => {
     ]
   };
 
-  const radarData = {
+  const radarData = company.radar_data ? {
     labels: ['Profitability', 'Growth', 'Leverage', 'Returns', 'Valuation'],
     datasets: [{
       label: 'Financial Health Profile',
-      data: [85, 60, 90, 75, 40], // Mocked dimensions based on overall score
+      data: company.radar_data,
       backgroundColor: 'rgba(59, 130, 246, 0.2)',
       borderColor: '#3b82f6',
       borderWidth: 2,
     }]
-  };
+  } : null;
 
   const ml = company.ml_score || {};
 
@@ -71,15 +71,15 @@ const CompanyDetail = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-fin-border pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold">{company.company_name}</h1>
+            <h1 className="text-3xl font-bold">{company.name || company.company_name}</h1>
             <span className="bg-fin-border px-3 py-1 rounded-md text-sm font-semibold tracking-wider text-fin-blue">{company.symbol}</span>
           </div>
-          <p className="text-fin-muted mt-1">{company.sector?.sector_name} • {company.industry}</p>
+          <p className="text-fin-muted mt-1">{company.sector || company.sector?.sector_name} • {company.industry}</p>
         </div>
         
         <div className="text-right">
-          <div className="text-3xl font-bold">₹{company.current_price}</div>
-          <div className="text-sm text-fin-muted">M.Cap: {company.market_cap_cr} Cr</div>
+          <div className="text-3xl font-bold">₹{company.current_price || '-'}</div>
+          <div className="text-sm text-fin-muted">M.Cap: {company.market_cap || company.market_cap_cr || '-'} Cr</div>
         </div>
       </div>
 
@@ -140,8 +140,8 @@ const CompanyDetail = () => {
         </Card>
         
         <Card title="Financial Profile" className="h-[400px] flex flex-col">
-          <div className="flex-1 relative">
-             <RadarChart data={radarData} />
+          <div className="flex-1 relative flex items-center justify-center">
+             {radarData ? <RadarChart data={radarData} /> : <span className="text-fin-muted">Profile not available</span>}
           </div>
         </Card>
       </div>

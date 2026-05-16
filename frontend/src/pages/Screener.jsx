@@ -13,7 +13,7 @@ const Screener = () => {
   const fetchResults = async () => {
     setLoading(true);
     try {
-      let query = `/screener/?`;
+      let query = `/companies/?`;
       if (searchParams.search) query += `search=${searchParams.search}&`;
       if (searchParams.min_health) query += `min_health=${searchParams.min_health}&`;
       
@@ -92,16 +92,16 @@ const Screener = () => {
               </thead>
               <tbody>
                 {companies.length > 0 ? companies.map(company => (
-                  <tr key={company.company_id} className="border-b border-fin-border hover:bg-fin-border/20 transition-colors">
+                  <tr key={company.id || company.company_id} className="border-b border-fin-border hover:bg-fin-border/20 transition-colors">
                     <td className="px-6 py-4 font-semibold text-fin-blue">{company.symbol}</td>
-                    <td className="px-6 py-4">{company.company_name}</td>
-                    <td className="px-6 py-4 text-fin-muted">{company.sector_name}</td>
+                    <td className="px-6 py-4">{company.name || company.company_name}</td>
+                    <td className="px-6 py-4 text-fin-muted">{company.sector || company.sector_name || '-'}</td>
                     <td className="px-6 py-4 text-right">
                       <span className="font-mono text-lg font-bold">{company.health_score || 'N/A'}</span>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <button 
-                        onClick={() => navigate(`/company/${company.company_id}`)}
+                        onClick={() => navigate(`/company/${company.id || company.company_id}`)}
                         className="fin-button-outline text-xs py-1"
                       >
                         Deep Dive

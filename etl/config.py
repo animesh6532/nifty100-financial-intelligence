@@ -17,7 +17,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 RAW_DATA_PATH = os.path.join(DATA_DIR, "raw")
 PROCESSED_DATA_PATH = os.path.join(DATA_DIR, "processed")
+CLEANED_DATA_PATH = os.path.join(DATA_DIR, "cleaned")
 
 # Create dirs if not exist
 os.makedirs(RAW_DATA_PATH, exist_ok=True)
 os.makedirs(PROCESSED_DATA_PATH, exist_ok=True)
+os.makedirs(CLEANED_DATA_PATH, exist_ok=True)
